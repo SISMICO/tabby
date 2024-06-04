@@ -1,0 +1,26 @@
+services:
+  tabby-cpu:
+    restart: unless-stopped
+    image: tabbyml/tabby
+    entrypoint: /opt/tabby/bin/tabby-cpu
+    command: serve --model StarCoder-1B
+    volumes:
+      - "$HOME/.tabby:/data"
+    ports:
+      - 8095:8080
+
+  tabby-gpu:
+    restart: unless-stopped
+    image: tabbyml/tabby
+    command: serve --model StarCoder-1B --device cuda
+    volumes:
+      - "$HOME/.tabby:/data"
+    ports:
+      - 8095:8080
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
